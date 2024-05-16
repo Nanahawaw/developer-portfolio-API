@@ -32,3 +32,15 @@ export const deleteProject = async (req, res) => {
     await findProject.save();
     return res.status(200).json({ message: 'Project deleted successfully' });
 }
+
+export const updateProject = async (req, res) => {
+    const id = req.params.id;
+    const { title, description, image, url } = req.body;
+    const updatedProject = await Project.findByIdAndUpdate(id, { title, description, image, url }, { new: true });
+    if (!updatedProject
+    ) {
+        return res.status(404).json({ message: 'Project not found' });
+    }
+    await updatedProject.save();
+    return res.status(200).json({ message: 'Project updated successfully' });
+}
