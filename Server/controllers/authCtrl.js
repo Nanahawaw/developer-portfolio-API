@@ -1,6 +1,10 @@
 // controllers/authController.js
 import User from '../models/userModel.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 export const signUp = async (req, res) => {
     const { email, password } = req.body;
@@ -35,7 +39,18 @@ export const signIn = async (req, res) => {
             return res.status(400).json({ message: 'Invalid password' });
         }
 
-        res.status(200).json({ message: 'Login successful' });
+        //create a token
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+
+        });
+
+        //store in cookies
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        res.status(200).json({ message: 'Login successful', user, token });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
