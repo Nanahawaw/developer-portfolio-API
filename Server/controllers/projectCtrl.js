@@ -2,7 +2,7 @@ import Project from '../models/projectModel.js'
 
 export const getProjects = async (req, res) => {
     try {
-        const projects = await Project.find().populate('comments');
+        const projects = await Project.find();
         res.json(projects);
     } catch (err) {
         res.status(500).json({ message: err.message });
