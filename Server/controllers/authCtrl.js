@@ -40,12 +40,12 @@ export const signIn = async (req, res) => {
         }
 
         //create a token
-        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
 
         });
 
         //store in cookies
-        res.cookie('jwt', token, {
+        res.cookie('accessToken', token, {
             httpOnly: true,
             secure: true,
         });
@@ -57,3 +57,4 @@ export const signIn = async (req, res) => {
 };
 
 // Add Google authentication logic here
+export const googleAuth = async (req, res) => { }
