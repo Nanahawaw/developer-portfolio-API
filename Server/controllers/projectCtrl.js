@@ -44,3 +44,22 @@ export const updateProject = async (req, res) => {
     await updatedProject.save();
     return res.status(200).json({ message: 'Project updated successfully' });
 }
+
+export const incrementView = async (req, res) => {
+    try {
+        const projectId = req.params.projectId;
+        const project = await Project.findById(projectId);
+
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.views += 1;
+        await project.save();
+
+        res.status(200).json({ message: 'View count incremented successfully' });
+    } catch (error) {
+        console.error('Error incrementing view count:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
