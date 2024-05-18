@@ -1,14 +1,21 @@
 import User from "../models/userModel.js";
 import Comment from "../models/commentModel.js";
 import Project from "../models/projectModel.js";
+import jwt from 'jsonwebtoken'
 
 
 
 export const likeProject = async (req, res) => {
     const { projectId } = req.body;
-    const userId = req.user._id; // Assuming you have set up authentication middleware
+
 
     try {
+        const token = req.headers.authorization?.split('')[1]
+        if (!token) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        const userId = decodedToken.id
         const project = await Project.findById(projectId);
         if (!project) {
             return res.status(404).json({ message: 'Project not found' });
@@ -74,3 +81,27 @@ export const createComment = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }
+export const incrementViewCount = async (req, res) => {
+    const { projectId } = req.body;
+
+    try {
+        // Verify the JWT token
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decodedToken.id;
+
+        const project = await Project.findById(projectId);
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+
+        project.views += 1;
+        await project.save();
+        res.status(200).json({ message: 'View count incremented successfully' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
